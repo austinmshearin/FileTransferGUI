@@ -62,3 +62,27 @@ def get_files(filepath: str, include_extensions: list = [], exclude_extensions: 
                     retrieved_filepaths.append(os.path.join(dirpath, filename))
     # Return the tuple of filenames and filepaths
     return retrieved_filenames, retrieved_filepaths
+
+
+def transfer_files(src: str, des: str, include_extensions: list = [], exclude_extensions: list = []):
+    """
+    Transfer all files and folder structure from source to destination
+
+    Parameters
+    ----------
+    src: str
+        The source filepath
+    des: str
+        The destination filepath
+    include_extensions: list = []
+        File extensions to include in the transfer
+    exclude_extensions: list = []
+        File extensions to exclude in the transfer
+    """
+    # Assert that arguments are the correct format
+    assert type(src) is str, "Source filepath must be a string"
+    assert type(des) is str, "Destination filepath must be a string"
+    assert type(include_extensions) is list, "Included extensions must be a list"
+    assert type(exclude_extensions) is list, "Excluded extensions must be a list"
+    assert all([type(extension) is str for extension in include_extensions]), "All included extensions must be strings"
+    assert all([type(extension) is str for extension in exclude_extensions]), "All excluded extensions must be strings"

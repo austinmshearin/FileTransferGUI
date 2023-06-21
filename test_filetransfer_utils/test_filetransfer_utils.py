@@ -223,3 +223,72 @@ class TestGetFiles:
             raise Exception("get_files did not return correct number of files from directory with excluded file extension")
         elif not all([filename.split('.')[-1] in [extension for extension in [dummy_file.split(".")[-1] for dummy_file in dummy_files] if extension not in test_extensions] for filename in filenames]):
             raise Exception("get_files did not return correct files with specified file extension inclusion from whole directory")
+
+
+class TestTransferFilesAssertions:
+    """
+    Tests that transfer files method returns assertion errors for edge cases
+    """
+    def test_src_filepath_not_str(self):
+        """
+        Test the src filepath must be a string
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src=1,
+                des="A"
+            )
+
+    def test_des_filepath_not_str(self):
+        """
+        Test the des filepath must be a string
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src="A",
+                des=1
+            )
+
+    def test_include_extension_not_list(self):
+        """
+        Test that included extensions must be a list
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src=dummy_src,
+                des=dummy_des,
+                include_extensions="A"
+            )
+
+    def test_exclude_extension_not_list(self):
+        """
+        Test that excluded extensions must be a list
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src=dummy_src,
+                des=dummy_des,
+                exclude_extensions="A"
+            )
+
+    def test_include_extension_contains_not_str(self):
+        """
+        Test that all included extensions must be strings
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src=dummy_src,
+                des=dummy_des,
+                include_extensions=["A", 1]
+            )
+
+    def test_exclude_extensions_contains_not_str(self):
+        """
+        Test that all excluded extensions must be strings
+        """
+        with pytest.raises(AssertionError):
+            _ = file_transfer.transfer_files(
+                src=dummy_src,
+                des=dummy_des,
+                exclude_extensions=["A", 1]
+            )
