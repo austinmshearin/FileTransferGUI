@@ -54,7 +54,7 @@ class TestGetFilesAssertions:
         with pytest.raises(AssertionError):
             _ = file_transfer.get_files(
                 filepath=dummy_src,
-                include_file_extensions="A"
+                include_extensions="A"
             )
 
     def test_exclude_extension_not_list(self):
@@ -64,7 +64,7 @@ class TestGetFilesAssertions:
         with pytest.raises(AssertionError):
             _ = file_transfer.get_files(
                 filepath=dummy_src,
-                exclude_file_extensions="A"
+                exclude_extensions="A"
             )
 
     def test_include_extension_contains_not_str(self):
@@ -74,7 +74,7 @@ class TestGetFilesAssertions:
         with pytest.raises(AssertionError):
             _ = file_transfer.get_files(
                 filepath=dummy_src,
-                include_file_extensions=["A", 1]
+                include_extensions=["A", 1]
             )
 
     def test_exclude_extensions_contains_not_str(self):
@@ -84,7 +84,7 @@ class TestGetFilesAssertions:
         with pytest.raises(AssertionError):
             _ = file_transfer.get_files(
                 filepath=dummy_src,
-                exclude_file_extensions=["A", 1]
+                exclude_extensions=["A", 1]
             )
 
 
@@ -145,7 +145,7 @@ class TestGetFiles:
         test_extension = "txt"
         filenames, _ = file_transfer.get_files(
             filepath=self.single_directory,
-            include_file_extensions=[test_extension]
+            include_extensions=[test_extension]
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if test_extension in dummy_file] for filename in filenames]):
             raise Exception("get_files did not only include specified extension from single directory")
@@ -157,7 +157,7 @@ class TestGetFiles:
         test_extensions = ["txt", "png"]
         filenames, _ = file_transfer.get_files(
             filepath=self.single_directory,
-            include_file_extensions=test_extensions
+            include_extensions=test_extensions
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if any([test_extension in dummy_file for test_extension in test_extensions])] for filename in filenames]):
             raise Exception("get_files did not retrieve all specified extensions from single directory")
@@ -169,7 +169,7 @@ class TestGetFiles:
         test_extension = "txt"
         filenames, _ = file_transfer.get_files(
             filepath=self.single_directory,
-            exclude_file_extensions=[test_extension]
+            exclude_extensions=[test_extension]
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if test_extension not in dummy_file] for filename in filenames]):
             raise Exception("get_files did not exclude specified extension from single directory")
@@ -181,7 +181,7 @@ class TestGetFiles:
         test_extensions = ["txt", "png"]
         filenames, _ = file_transfer.get_files(
             filepath=self.single_directory,
-            exclude_file_extensions=test_extensions
+            exclude_extensions=test_extensions
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if all([test_extension not in dummy_file for test_extension in test_extensions])] for filename in filenames]):
             raise Exception("get_files did not exclude all specified extensions from single directory")
@@ -203,7 +203,7 @@ class TestGetFiles:
         test_extensions = ["txt", "png"]
         filenames, _ = file_transfer.get_files(
             filepath=dummy_src,
-            include_file_extensions=test_extensions
+            include_extensions=test_extensions
         )
         if not len(filenames) == 6:
             raise Exception("get_files did not return correct number of files from directory with included file extension")
@@ -217,7 +217,7 @@ class TestGetFiles:
         test_extensions = ["txt", "png"]
         filenames, _ = file_transfer.get_files(
             filepath=dummy_src,
-            exclude_file_extensions=test_extensions
+            exclude_extensions=test_extensions
         )
         if not len(filenames) == 6:
             raise Exception("get_files did not return correct number of files from directory with excluded file extension")
