@@ -27,6 +27,8 @@ def get_files(filepath: str, include_file_extensions: list = [], exclude_file_ex
     tuple
         List of all filenames, list of all relative filepaths, list of all full filepaths
     """
+    # Assert that arguments are the correct format
+    assert type(filepath) is str, "filepath must be a string"
     assert type(include_file_extensions) is list, "include_file_extensions must be a list"
     assert type(exclude_file_extensions) is list, "exclude_file_extensions must be a list"
     assert all([type(extension) is str for extension in include_file_extensions]), "File extentions must be strings"

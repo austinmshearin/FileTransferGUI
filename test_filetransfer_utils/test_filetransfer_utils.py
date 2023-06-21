@@ -36,6 +36,12 @@ class TestGetFilesAssertions:
     """
     Tests that get files method returns assertion errors for edge cases
     """
+    def test_filepath_not_str(self):
+        with pytest.raises(AssertionError):
+            _ = file_transfer.get_files(
+                filepath=1
+            )
+
     def test_include_extension_not_list(self):
         with pytest.raises(AssertionError):
             _ = file_transfer.get_files(
