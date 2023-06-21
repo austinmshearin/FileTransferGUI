@@ -7,6 +7,29 @@ import os
 # Local Imports
 
 
+def drop_period_extension(file_extensions: list) -> list:
+    """
+    Drops the period from all file extensions in a list
+
+    Parameters
+    ----------
+    file_extensions: list
+        A list of file extensions that may or may not start with a period
+
+    Returns
+    -------
+    list
+        The list of file extensions with period removed
+    """
+    modified_extensions = []
+    for extension in file_extensions:
+        if extension[0] == ".":
+            modified_extensions.append(extension[1:])
+        else:
+            modified_extensions.append(extension)
+    return modified_extensions
+
+
 def get_files(filepath: str, include_extensions: list = [], exclude_extensions: list = []) -> tuple:
     """
     Retrieves all files within the filepath with specified file extension excluding any specified file extensions
@@ -34,12 +57,8 @@ def get_files(filepath: str, include_extensions: list = [], exclude_extensions: 
     assert all([type(extension) is str for extension in include_extensions]), "File extentions must be strings"
     assert all([type(extension) is str for extension in exclude_extensions]), "File extentions must be strings"
     # Modify all extensions to drop period if included
-    for extension_index, extension in enumerate(include_extensions):
-        if extension[0] == ".":
-            include_extensions[extension_index] = extension[1:]
-    for extension_index, extension in enumerate(exclude_extensions):
-        if extension[0] == ".":
-            exclude_extensions[extension_index] = extension[1:]
+    include_extensions = drop_period_extension(include_extensions)
+    exclude_extensions = drop_period_extension(exclude_extensions)
     # List of all filenames retrieved
     retrieved_filenames = []
     # List of all full filepaths retrieved
@@ -86,3 +105,6 @@ def transfer_files(src: str, des: str, include_extensions: list = [], exclude_ex
     assert type(exclude_extensions) is list, "Excluded extensions must be a list"
     assert all([type(extension) is str for extension in include_extensions]), "All included extensions must be strings"
     assert all([type(extension) is str for extension in exclude_extensions]), "All excluded extensions must be strings"
+    # Modify all extensions to drop period if included
+    include_extensions = drop_period_extension(include_extensions)
+    exclude_extensions = drop_period_extension(exclude_extensions)

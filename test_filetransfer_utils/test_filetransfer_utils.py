@@ -34,6 +34,27 @@ def teardown_module():
     shutil.rmtree(dummy_des)
 
 
+class TestDropPeriodExtensions:
+    """
+    Tests that drop period extensions method returns correct file extensions
+    """
+    def test_correct_extensions(self):
+        """
+        Tests that correct extensions are not modified
+        """
+        file_extensions = ["txt", "png"]
+        modified_extensions = file_transfer.drop_period_extension(file_extensions)
+        assert modified_extensions == file_extensions
+
+    def test_incorrect_extensions(self):
+        """
+        Tests that incorrect extensions are modified
+        """
+        file_extensions = [".txt", ".png"]
+        modified_extensions = file_transfer.drop_period_extension(file_extensions)
+        assert modified_extensions == ["txt", "png"]
+
+
 class TestGetFilesAssertions:
     """
     Tests that get files method returns assertion errors for edge cases
