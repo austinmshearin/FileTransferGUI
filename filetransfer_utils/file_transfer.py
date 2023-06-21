@@ -3,6 +3,7 @@ Package for handling basic file transfer processes
 """
 # Standard Imports
 import os
+import shutil
 
 # Local Imports
 
@@ -83,7 +84,7 @@ def get_files(filepath: str, include_extensions: list = [], exclude_extensions: 
     return retrieved_filenames, retrieved_filepaths
 
 
-def transfer_files(src: str, des: str, include_extensions: list = [], exclude_extensions: list = []):
+def transfer_files(src: str, des: str, include_extensions: list = [], exclude_extensions: list = [], overwrite: bool = False):
     """
     Transfer all files and folder structure from source to destination
 
@@ -97,6 +98,8 @@ def transfer_files(src: str, des: str, include_extensions: list = [], exclude_ex
         File extensions to include in the transfer
     exclude_extensions: list = []
         File extensions to exclude in the transfer
+    overwrite: bool = False
+        Whether to overwrite files if they already exist in destination
     """
     # Assert that arguments are the correct format
     assert type(src) is str, "Source filepath must be a string"
@@ -108,3 +111,21 @@ def transfer_files(src: str, des: str, include_extensions: list = [], exclude_ex
     # Modify all extensions to drop period if included
     include_extensions = drop_period_extension(include_extensions)
     exclude_extensions = drop_period_extension(exclude_extensions)
+    # Modify source and destination so path delimiter is the same
+    src = src.replace("\\", "/")
+    des = des.replace("\\", "/")
+    # Get all filepaths from source to transfer
+    _, src_filepaths = get_files(src, include_extensions=include_extensions, exclude_extensions=exclude_extensions)
+    # Modify all filepaths to be sure path delimiter is the same
+    src_filepaths = [filepath.replace("\\", "/") for filepath in src_filepaths]
+    # Create list of relative filepaths
+    rel_filepaths = [filepath.replace(src, "") for filepath in src_filepaths]
+    # Create list of destination filepaths
+    des_filepaths = [os.path.join(des, filepath) for filepath in rel_filepaths]
+    if not overwrite:
+        if any([os.path.exists(filepath) for filepath in des_filepaths]):
+            raise Exception("File already exists in destination filepath, consider setting overwrite to True")
+    # Transfer files
+    for src_filepath, des_filepath in zip(src_filepaths, des_filepaths):
+        os.makedirs(os.path.dirname(des_filepath), exist_ok=True)
+        shutil.copyfile(src_filepath, des_filepath)
