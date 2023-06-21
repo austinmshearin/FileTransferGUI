@@ -4,6 +4,9 @@
 # Python cache files
 *__pycache__*
 
+# filetransfer_utils editable development mode
+filetransfer_utils.egg-info/
+
 # Visual Studio Code files
 *.code-workspace
 *.vscode
