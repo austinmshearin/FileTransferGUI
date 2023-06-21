@@ -1,6 +1,9 @@
 # Python virtual environment
 *_VirEnv/
 
+# Python cache files
+*__pycache__*
+
 # Visual Studio Code files
 *.code-workspace
 *.vscode
