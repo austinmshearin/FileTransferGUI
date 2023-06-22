@@ -119,9 +119,11 @@ def transfer_files(src: str, des: str, include_extensions: list = [], exclude_ex
     # Modify all filepaths to be sure path delimiter is the same
     src_filepaths = [filepath.replace("\\", "/") for filepath in src_filepaths]
     # Create list of relative filepaths
-    rel_filepaths = [filepath.replace(src, "") for filepath in src_filepaths]
+    rel_filepaths = [filepath.replace(src, "")[1:] for filepath in src_filepaths]
     # Create list of destination filepaths
     des_filepaths = [os.path.join(des, filepath) for filepath in rel_filepaths]
+    # Modify all filepaths to be sure path delimited is the same
+    des_filepaths = [filepath.replace("\\", "/") for filepath in des_filepaths]
     if not overwrite:
         if any([os.path.exists(filepath) for filepath in des_filepaths]):
             raise Exception("File already exists in destination filepath, consider setting overwrite to True")
