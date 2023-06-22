@@ -34,10 +34,40 @@ def teardown_module():
     shutil.rmtree(dummy_des)
 
 
+def populate_src_dummy_dir():
+    """
+    Populates the source dummy directoy
+    """
+    for dummy_dir in dummy_dirs:
+        dummy_filepath = os.path.join(dummy_src, dummy_dir)
+        os.makedirs(dummy_filepath, exist_ok=True)
+        for dummy_file in dummy_files:
+            with open(os.path.join(dummy_filepath, dummy_file), "w"):
+                pass
+
+
+def clear_src_des_dummy_dirs():
+    """
+    Clears the source and destination dummy directories
+    """
+    for dummy_dir in dummy_dirs:
+        dummy_src_filepath = os.path.join(dummy_src, dummy_dir)
+        try:
+            shutil.rmtree(dummy_src_filepath)
+        except FileNotFoundError:
+            pass
+        dummy_des_filepath = os.path.join(dummy_des, dummy_dir)
+        try:
+            shutil.rmtree(dummy_des_filepath)
+        except FileNotFoundError:
+            pass
+
+
 class TestDropPeriodExtensions:
     """
     Tests that drop period extensions method returns correct file extensions
     """
+
     def test_correct_extensions(self):
         """
         Tests that correct extensions are not modified
@@ -59,6 +89,7 @@ class TestGetFilesAssertions:
     """
     Tests that get files method returns assertion errors for edge cases
     """
+
     def test_filepath_not_str(self):
         """
         Test the filepath must be a string
@@ -126,21 +157,14 @@ class TestGetFiles:
         """
         Populates the source directory with dummy data
         """
-        for dummy_dir in dummy_dirs:
-            dummy_filepath = os.path.join(dummy_src, dummy_dir)
-            os.makedirs(dummy_filepath, exist_ok=True)
-            for dummy_file in dummy_files:
-                with open(os.path.join(dummy_filepath, dummy_file), "w"):
-                    pass
+        populate_src_dummy_dir()
 
     @classmethod
     def teardown_class(cls):
         """
         Clears the source directory of dummy data
         """
-        for dummy_dir in dummy_dirs:
-            dummy_filepath = os.path.join(dummy_src, dummy_dir)
-            shutil.rmtree(dummy_filepath)
+        clear_src_des_dummy_dirs()
 
     @pytest.fixture(autouse=True)
     def _get_single_dummy_dir(self, single_dummy_dir):
@@ -158,7 +182,7 @@ class TestGetFiles:
             raise Exception("get_files did not return all files from single directory")
         elif not all([os.path.exists(filepath) for filepath in filepaths]):
             raise Exception("get_files did not return correct filepaths from single directory")
-        
+
     def test_get_single_directory_inclusion_single(self):
         """
         Tests that specifying a single file extensions inclusion retrieves correct file
@@ -170,7 +194,7 @@ class TestGetFiles:
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if test_extension in dummy_file] for filename in filenames]):
             raise Exception("get_files did not only include specified extension from single directory")
-        
+
     def test_get_single_directory_inclusion_multiple(self):
         """
         Tests that specifying multiple file extension inclusions retrieves correct files
@@ -182,7 +206,7 @@ class TestGetFiles:
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if any([test_extension in dummy_file for test_extension in test_extensions])] for filename in filenames]):
             raise Exception("get_files did not retrieve all specified extensions from single directory")
-        
+
     def test_get_single_directory_exclude_single(self):
         """
         Tests that specifying a single file extension excludes correct file
@@ -194,7 +218,7 @@ class TestGetFiles:
         )
         if not all([filename in [dummy_file for dummy_file in dummy_files if test_extension not in dummy_file] for filename in filenames]):
             raise Exception("get_files did not exclude specified extension from single directory")
-        
+
     def test_get_single_directory_exclude_multiple(self):
         """
         Tests that specifying multiple file extensions excludes correct files
@@ -230,7 +254,7 @@ class TestGetFiles:
             raise Exception("get_files did not return correct number of files from directory with included file extension")
         elif not all([filename.split('.')[-1] in test_extensions for filename in filenames]):
             raise Exception("get_files did not return correct files with specified file extension inclusion from whole directory")
-        
+
     def test_get_directory_exclude(self):
         """
         Tests to make sure that all filenames are retrieved from whole directory with file extension exclusion
@@ -250,6 +274,7 @@ class TestTransferFilesAssertions:
     """
     Tests that transfer files method returns assertion errors for edge cases
     """
+
     def test_src_filepath_not_str(self):
         """
         Test the src filepath must be a string
