@@ -338,3 +338,175 @@ class TestTransferFilesAssertions:
                 des=dummy_des,
                 exclude_extensions=["A", 1]
             )
+
+
+@pytest.fixture()
+def src_des_single_dummy_dir():
+    """
+    Filepath for first source and destination dummy directories
+    """
+    return os.path.join(dummy_src, dummy_dirs[0]), os.path.join(dummy_des, dummy_dirs[0])
+
+
+class TestTransferFiles:
+    """
+    Test the transfer files method
+    """
+    @pytest.fixture(autouse=True)
+    def _get_single_dummy_dir(self, src_des_single_dummy_dir):
+        """
+        Returns the single dummy directory fixture
+        """
+        self.src_single_directory, self.des_single_directory = src_des_single_dummy_dir
+
+    def setup_method(test_transfer_single_directory):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_single_directory):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_single_directory(self):
+        """
+        Tests that all files are transferred from one directory to another
+        """
+        file_transfer.transfer_files(self.src_single_directory, self.des_single_directory)
+        filenames, _ = file_transfer.get_files(self.des_single_directory)
+        if not all([dummy_file in filenames for dummy_file in dummy_files]):
+            raise Exception("transfer_files did not transfer all files from single directory")
+
+    def setup_method(test_transfer_single_directory_inclusion):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_single_directory_inclusion):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_single_directory_inclusion(self):
+        """
+        Tests that all files are transferred from one directory to another with inclusion specified
+        """
+        test_extensions = ["txt", "png"]
+        file_transfer.transfer_files(
+            src=self.src_single_directory,
+            des=self.des_single_directory,
+            include_extensions=test_extensions
+        )
+        filenames, _ = file_transfer.get_files(self.des_single_directory)
+        if not all([dummy_file in filenames for dummy_file in [file for file in dummy_files if file.split(".")[-1] in test_extensions]]):
+            raise Exception("transfer_files did not transfer all files from single directory with inclusion specified")
+
+    def setup_method(test_transfer_single_directory_exclusion):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_single_directory_exclusion):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_single_directory_exclusion(self):
+        """
+        Tests that all files are transferred from one directory to another with exclusion specified
+        """
+        test_extensions = ["txt", "png"]
+        file_transfer.transfer_files(
+            src=self.src_single_directory,
+            des=self.des_single_directory,
+            exclude_extensions=test_extensions
+        )
+        filenames, _ = file_transfer.get_files(self.des_single_directory)
+        if not all([dummy_file in filenames for dummy_file in [file for file in dummy_files if file.split(".")[-1] not in test_extensions]]):
+            raise Exception("transfer_files did not transfer all files from single directory with exclusion specified")
+
+    def setup_method(test_transfer_directory):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_directory):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_directory(self):
+        """
+        Tests that all files and folder structure are transferred from one directory to another
+        """
+        file_transfer.transfer_files(dummy_src, dummy_des)
+        _, filepaths = file_transfer.get_files(dummy_des)
+        if len(filepaths) != 12:
+            raise Exception("transfer_files did not transfer all files")
+        elif len([os.path.basename(os.path.dirname(filepath)) == "A" for filepath in filepaths]) == 4:
+            raise Exception("transfer_files did not transfer folder structure")
+
+    def setup_method(test_transfer_directory_inclusion):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_directory_inclusion):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_directory_inclusion(self):
+        """
+        Tests that all files and folder structure are transferred from one directory to another with inclusion
+        """
+        test_extensions = ["txt", "png"]
+        file_transfer.transfer_files(
+            src=dummy_src,
+            des=dummy_des,
+            include_extensions=test_extensions
+        )
+        _, filepaths = file_transfer.get_files(dummy_des)
+        if len(filepaths) != 6:
+            raise Exception("transfer_files did not transfer all files with inclusion")
+        elif len([os.path.basename(os.path.dirname(filepath)) == "A" for filepath in filepaths]) == 2:
+            raise Exception("transfer_files did not transfer folder structure with inclusion")
+        
+    def setup_method(test_transfer_directory_exclusion):
+        """
+        Populates the source directory with dummy data
+        """
+        populate_src_dummy_dir()
+
+    def teardown_method(test_transfer_directory_exclusion):
+        """
+        Clears the source directory of dummy data
+        """
+        clear_src_des_dummy_dirs()
+
+    def test_transfer_directory_exclusion(self):
+        """
+        Tests that all files and folder structure are transferred from one directory to another with exclusion
+        """
+        test_extensions = ["txt", "png"]
+        file_transfer.transfer_files(
+            src=dummy_src,
+            des=dummy_des,
+            exclude_extensions=test_extensions
+        )
+        _, filepaths = file_transfer.get_files(dummy_des)
+        if len(filepaths) != 6:
+            raise Exception("transfer_files did not transfer all files with inclusion")
+        elif len([os.path.basename(os.path.dirname(filepath)) == "A" for filepath in filepaths]) == 2:
+            raise Exception("transfer_files did not transfer folder structure with inclusion")
